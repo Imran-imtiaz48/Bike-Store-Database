@@ -1,35 +1,62 @@
-create database testdb;
-use testdb;
+-- Create database
+CREATE DATABASE testdb;
+GO
 
-create table Customer_master(
-Customer_id int not null primary key,
-Customer_Firstname varchar(300) not null,
-Customer_Lastname varchar(300),
-Age int not null,
-Email varchar(250) unique,
-Contact int not null
+USE testdb;
+GO
+
+------------------------------------------------
+-- Customer master
+------------------------------------------------
+CREATE TABLE Customer_master (
+    Customer_id INT IDENTITY(1,1) PRIMARY KEY,
+    Customer_Firstname VARCHAR(150) NOT NULL,
+    Customer_Lastname VARCHAR(150),
+    Age INT CHECK (Age >= 0 AND Age <= 120),  -- enforce realistic age
+    Email VARCHAR(250) UNIQUE NOT NULL,
+    Contact VARCHAR(15) NOT NULL UNIQUE        -- changed from INT to VARCHAR
 );
 
-create table City_Master(
-City_id int not null primary key,
-City_name varchar(250) not null
+------------------------------------------------
+-- City master
+------------------------------------------------
+CREATE TABLE City_Master (
+    City_id INT IDENTITY(1,1) PRIMARY KEY,
+    City_name VARCHAR(150) NOT NULL UNIQUE
 );
 
-create table Addresstype_Master(
-Addtype_id int not null primary key,
-Address_type varchar(500) not null
+------------------------------------------------
+-- Address type master
+------------------------------------------------
+CREATE TABLE Addresstype_Master (
+    Addtype_id INT IDENTITY(1,1) PRIMARY KEY,
+    Address_type VARCHAR(100) NOT NULL UNIQUE
 );
 
-create table Country_Master(
-Country_id int not null primary key,
-Country_Name varchar(500) not null
+------------------------------------------------
+-- Country master
+------------------------------------------------
+CREATE TABLE Country_Master (
+    Country_id INT IDENTITY(1,1) PRIMARY KEY,
+    Country_Name VARCHAR(150) NOT NULL UNIQUE
 );
 
-create table Customer_Address_Info(
-Add_detail_id int not null primary key,
-Address varchar(600) not null,
-Addtype_id int foreign key references Addresstype_Master(Addtype_id) on delete no action on update cascade,
-City_id int foreign key references City_Master(City_id) on delete no action on update cascade,
-Country_id int foreign key references Country_Master(Country_id) on delete no action on update cascade,
-Customer_id int foreign key references Customer_master(Customer_id) on delete no action on update cascade
+------------------------------------------------
+-- Customer address info
+------------------------------------------------
+CREATE TABLE Customer_Address_Info (
+    Add_detail_id INT IDENTITY(1,1) PRIMARY KEY,
+    Address VARCHAR(500) NOT NULL,
+    Addtype_id INT NOT NULL,
+    City_id INT NOT NULL,
+    Country_id INT NOT NULL,
+    Customer_id INT NOT NULL,
+    FOREIGN KEY (Addtype_id) REFERENCES Addresstype_Master(Addtype_id) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (City_id) REFERENCES City_Master(City_id) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Country_id) REFERENCES Country_Master(Country_id) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Customer_id) REFERENCES Customer_master(Customer_id) 
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
